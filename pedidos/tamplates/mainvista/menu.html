@@ -1,0 +1,32 @@
+{% extends 'mainvista/base.html' %}
+
+{% block content %}
+<h2 class="mb-4">✈️ Catálogo de Paquetes Turísticos</h2>
+
+<div class="row">
+    {% for paquete in paquetes %}
+    <div class="col-md-4 mb-3">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">{{ paquete.nombre }}</h5>
+                <p class="card-text text-muted">Destino: {{ paquete.destino }}</p>
+                <p class="card-text text-muted">Categoría: {{ paquete.get_categoria_display }}</p>
+                <h6 class="text-success">${{ paquete.precio }}</h6>
+            </div>
+            <div class="card-footer bg-white border-top-0">
+                <form action="{% url 'crear_reserva' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="paquete_id" value="{{ paquete.id }}">
+                    <div class="input-group mb-2">
+                        <input type="text" name="cliente_nombre" class="form-control" placeholder="Tu nombre" required>
+                        <button type="submit" class="btn btn-primary">Reservar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>No hay paquetes registrados en el catálogo.</p>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,14 +1,14 @@
 from django.contrib import admin
-from .models import Producto, Pedido
+from .models import PaqueteTuristico, Reserva
 
-@admin.register(Producto)
-class ProductoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'nombre', 'precio', 'categoria', 'disponible')
+@admin.register(PaqueteTuristico)
+class PaqueteTuristicoAdmin(admin.ModelAdmin):
+    list_display = ('id', 'nombre', 'destino', 'precio', 'categoria', 'disponible')
     list_filter = ('categoria', 'disponible')
-    search_fields = ('nombre',)
+    search_fields = ('nombre', 'destino')
 
-@admin.register(Pedido)
-class PedidoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'cliente_nombre', 'estado', 'total', 'fecha')
+@admin.register(Reserva)
+class ReservaAdmin(admin.ModelAdmin):
+    list_display = ('id', 'cliente_nombre', 'paquete', 'estado', 'total', 'fecha')
     list_filter = ('estado', 'fecha')
     search_fields = ('cliente_nombre',)

@@ -20,7 +20,7 @@
                 <td><strong>#{{ reserva.id }}</strong></td>
                 <td>{{ reserva.cliente_nombre }}</td>
                 <td>
-                    <span class="badge
+                    <span class="badge 
                         {% if reserva.estado == 'PENDIENTE' %}bg-warning text-dark
                         {% elif reserva.estado == 'CONFIRMADA' %}bg-success
                         {% else %}bg-danger{% endif %}">
@@ -31,4 +31,20 @@
                 <td>
                     <form action="{% url 'cambiar_estado' reserva.id %}" method="POST" class="d-inline">
                         {% csrf_token %}
-                        <select
+                        <select name="nuevo_estado" onchange="this.form.submit()" class="form-select form-select-sm d-inline-block w-auto">
+                            <option value="PENDIENTE" {% if reserva.estado == 'PENDIENTE' %}selected{% endif %}>Pendiente</option>
+                            <option value="CONFIRMADA" {% if reserva.estado == 'CONFIRMADA' %}selected{% endif %}>Confirmada</option>
+                            <option value="CANCELADA" {% if reserva.estado == 'CANCELADA' %}selected{% endif %}>Cancelada</option>
+                        </select>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center">No hay reservas registradas.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

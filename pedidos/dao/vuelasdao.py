@@ -1,5 +1,6 @@
 from typing import List, Optional
-from paquetes.models import PaqueteTuristico, Reserva
+from pedidos.models import PaqueteTuristico, Reserva
+
 
 class PaqueteTuristicoDAO:
     """Capa DAO para operaciones de Paquetes Turísticos"""
@@ -19,6 +20,27 @@ class PaqueteTuristicoDAO:
         except PaqueteTuristico.DoesNotExist:
             return None
 
+    @staticmethod
+    def crear(datos: dict) -> PaqueteTuristico:
+        return PaqueteTuristico.objects.create(**datos)
+
+    @staticmethod
+    def actualizar(paquete_id: int, datos: dict) -> Optional[PaqueteTuristico]:
+        paquete = PaqueteTuristicoDAO.obtener_por_id(paquete_id)
+        if paquete:
+            for campo, valor in datos.items():
+                setattr(paquete, campo, valor)
+            paquete.save()
+        return paquete
+
+    @staticmethod
+    def eliminar(paquete_id: int) -> bool:
+        paquete = PaqueteTuristicoDAO.obtener_por_id(paquete_id)
+        if paquete:
+            paquete.delete()
+            return True
+        return False
+
 
 class ReservaDAO:
     """Capa DAO para operaciones de Reservas"""
@@ -35,3 +57,23 @@ class ReservaDAO:
                 cliente_nombre=cliente_nombre,
                 paquete=paquete,
                 total=paquete.precio
+            )
+        return None
+
+    @staticmethod
+    def cambiar_estado(reserva_id: int, nuevo_estado: str) -> Optional[Reserva]:
+        try:
+            reserva = Reserva.objects.get(id=reserva_id)
+            reserva.estado = nuevo_estado
+            reserva.save()
+            return reserva
+        except Reserva.DoesNotExist:
+            return None
+
+    @staticmethod
+    def eliminar(reserva_id: int) -> bool:
+        try:
+            Reserva.objects.get(id=reserva_id).delete()
+            return True
+        except Reserva.DoesNotExist:
+            return False

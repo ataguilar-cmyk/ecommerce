@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from paquetes.models import PaqueteTuristico, Reserva
+from pedidos.models import PaqueteTuristico, Reserva
 
 class PaqueteTuristicoSerializer(serializers.ModelSerializer):
     class Meta:

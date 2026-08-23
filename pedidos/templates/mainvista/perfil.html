@@ -1,0 +1,38 @@
+{% extends 'mainvista/base.html' %}
+
+{% block content %}
+<h2 class="mb-4">Mi perfil</h2>
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">{{ user.username }}</h5>
+        <p class="card-text text-muted">{{ user.email|default:"Sin correo registrado" }}</p>
+    </div>
+</div>
+
+<h4 class="mb-3">Mis reservas</h4>
+<div class="table-responsive">
+    <table class="table table-striped bg-white shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th># Reserva</th>
+                <th>Paquete</th>
+                <th>Estado</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reserva in reservas %}
+            <tr>
+                <td>#{{ reserva.id }}</td>
+                <td>{{ reserva.paquete.nombre }}</td>
+                <td>{{ reserva.get_estado_display }}</td>
+                <td>${{ reserva.total }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4" class="text-center">Aún no tienes reservas con este usuario.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<a href="{% url 'logout' %}" class="btn btn-outline-danger">Cerrar sesión</a>
+{% endblock %}

@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from pedidos.dao.vuelasdao import PaqueteTuristicoDAO, ReservaDAO
 from pedidos.serializers import PaqueteTuristicoSerializer, ReservaSerializer
 
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 # ==========================================
 # 1. VISTAS WEB (HTML)
 # ==========================================
@@ -34,6 +36,32 @@ def cambiar_estado_action(request, reserva_id):
         ReservaDAO.cambiar_estado(reserva_id, nuevo_estado)
     return redirect('cocina')
 
+
+# ... (tus imports y vistas existentes se quedan igual) ...
+
+def login_view(request):
+    """Muestra y procesa el formulario de inicio de sesión"""
+    error = None
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        usuario = authenticate(request, username=username, password=password)
+        if usuario is not None:
+            login(request, usuario)
+            return redirect('menu')
+        error = 'Usuario o contraseña incorrectos'
+    return render(request, 'mainvista/login.html', {'error': error})
+
+def logout_view(request):
+    """Cierra la sesión del usuario"""
+    logout(request)
+    return redirect('login')
+
+@login_required(login_url='login')
+def perfil_view(request):
+    """Muestra el perfil del usuario autenticado y sus reservas"""
+    mis_reservas = ReservaDAO.obtener_por_cliente(request.user.username)
+    return render(request, 'mainvista/perfil.html', {'reservas': mis_reservas})
 
 # ==========================================
 # 2. VISTAS API REST (JSON)

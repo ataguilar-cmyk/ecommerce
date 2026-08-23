@@ -50,6 +50,10 @@ class ReservaDAO:
         return Reserva.objects.all().order_by('-fecha')
 
     @staticmethod
+    def obtener_por_cliente(cliente_nombre: str) -> List[Reserva]:
+        return Reserva.objects.filter(cliente_nombre__iexact=cliente_nombre).order_by('-fecha')
+
+    @staticmethod
     def crear_reserva_con_paquete(cliente_nombre: str, paquete_id: int) -> Optional[Reserva]:
         paquete = PaqueteTuristicoDAO.obtener_por_id(paquete_id)
         if paquete:

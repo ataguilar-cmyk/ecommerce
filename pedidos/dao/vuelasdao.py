@@ -54,6 +54,13 @@ class ReservaDAO:
         return Reserva.objects.filter(cliente_nombre__iexact=cliente_nombre).order_by('-fecha')
 
     @staticmethod
+    def obtener_activas() -> List[Reserva]:
+        # Trae solo reservas activas para el panel del operador
+        return Reserva.objects.select_related('paquete').filter(
+            estado__in=['PENDIENTE', 'CONFIRMADA']
+        ).order_by('fecha')
+
+    @staticmethod
     def crear_reserva_con_paquete(cliente_nombre: str, paquete_id: int) -> Optional[Reserva]:
         paquete = PaqueteTuristicoDAO.obtener_por_id(paquete_id)
         if paquete:

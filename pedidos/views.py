@@ -11,15 +11,15 @@ from django.contrib.auth.decorators import login_required
 # 1. VISTAS WEB (HTML)
 # ==========================================
 
-def menu_view(request):
+def catalogo_view(request):
     """Muestra el catálogo de paquetes al cliente utilizando el DAO"""
     paquetes = PaqueteTuristicoDAO.obtener_disponibles()
-    return render(request, 'mainvista/menu.html', {'paquetes': paquetes})
+    return render(request, 'mainvista/catalogo.html', {'paquetes': paquetes})
 
-def cocina_view(request):
+def reservas_view(request):
     """Muestra las reservas activas al Operador utilizando el DAO"""
     reservas = ReservaDAO.obtener_todos()
-    return render(request, 'mainvista/cocina.html', {'reservas': reservas})
+    return render(request, 'mainvista/reservas.html', {'reservas': reservas})
 
 def crear_reserva_action(request):
     """Procesa el formulario web de una nueva reserva"""

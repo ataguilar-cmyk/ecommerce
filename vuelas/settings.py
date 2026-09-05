@@ -55,6 +55,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    #Middleware personalizado para auditoría de seguridad
+    'pedidos.middleware.AuditoriaSeguridadMiddleware',
 ]
 
 ROOT_URLCONF = 'vuelas.urls'
@@ -124,6 +126,11 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+#configuraciones de los archivos de media file
+import os
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
@@ -133,3 +140,5 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+
+

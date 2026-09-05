@@ -8,11 +8,11 @@ router.register(r'api/reservas', views.ReservaViewSet, basename='api_reservas')
 
 urlpatterns = [
     # Rutas Web (HTML)
-    path('', views.menu_view, name='menu'),
-    path('cocina/', views.cocina_view, name='cocina'),
+    path('', views.catalogo_view, name='catalogo'),
+    path('reservas/', views.reservas_view, name='reservas'),
     path('reserva/nueva/', views.crear_reserva_action, name='crear_reserva'),
     path('reserva/<int:reserva_id>/estado/', views.cambiar_estado_action, name='cambiar_estado'),
-     path('login/', views.login_view, name='login'),
+    path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('perfil/', views.perfil_view, name='perfil'),
 

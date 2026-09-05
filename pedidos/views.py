@@ -7,6 +7,23 @@ from pedidos.serializers import PaqueteTuristicoSerializer, ReservaSerializer
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+
+from django.contrib.auth.decorators import login_required, user_passes_test
+
+# ==========================================
+# Roles
+# ==========================================
+def es_operador(user):
+    """Verifica si el usuario autenticado pertenece al grupo 'Operador' o es Staff/Admin"""
+    return user.is_authenticated and (user.groups.filter(name='Operador').exists() or user.is_staff)
+
+@login_required
+@user_passes_test(es_operador, login_url='/admin/login/')
+def reservas_view(request):
+    """Muestra las reservas activas al Operador utilizando el DAO"""
+    reservas = ReservaDAO.obtener_todos()
+    return render(request, 'mainvista/reservas.html', {'reservas': reservas})
+
 # ==========================================
 # 1. VISTAS WEB (HTML)
 # ==========================================
@@ -16,6 +33,10 @@ def catalogo_view(request):
     paquetes = PaqueteTuristicoDAO.obtener_disponibles()
     return render(request, 'mainvista/catalogo.html', {'paquetes': paquetes})
 
+
+
+@login_required
+@user_passes_test(es_operador, login_url='/admin/login/')
 def reservas_view(request):
     """Muestra las reservas activas al Operador utilizando el DAO"""
     reservas = ReservaDAO.obtener_todos()
@@ -29,6 +50,8 @@ def crear_reserva_action(request):
         ReservaDAO.crear_reserva_con_paquete(cliente_nombre, paquete_id)
     return redirect('cocina')
 
+@login_required
+@user_passes_test(es_operador, login_url='/admin/login/')
 def cambiar_estado_action(request, reserva_id):
     """Actualiza el estado de una reserva desde la vista web"""
     if request.method == 'POST':

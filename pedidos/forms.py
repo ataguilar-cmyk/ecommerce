@@ -5,13 +5,14 @@ from django.core.exceptions import ValidationError
 class PaqueteTuristicoModelForm(forms.ModelForm):
     class Meta:
         model = PaqueteTuristico
-        fields = ['nombre', 'destino', 'precio', 'categoria', 'disponible']
+        fields = ['nombre', 'destino', 'precio', 'categoria', 'disponible', 'imagen']
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'destino': forms.TextInput(attrs={'class': 'form-control'}),
             'precio': forms.NumberInput(attrs={'class': 'form-control'}),
             'categoria': forms.Select(attrs={'class': 'form-select'}),
             'disponible': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'imagen': forms.FileInput(attrs={'class': 'form-control'}),
         }
 
     # Sanitización y validación individual de campo (clean_<campo>)

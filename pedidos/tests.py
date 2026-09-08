@@ -74,3 +74,29 @@ class ViajesTestCase(TestCase):
         response = self.client.post(reverse('crear_reserva'), datos)
         self.assertRedirects(response, reverse('catalogo'))
         self.assertEqual(Reserva.objects.count(), 1)
+
+class FrontendBackendIntegrationTests(TestCase):
+    def setUp(self):
+        self.paquete = PaqueteTuristico.objects.create(
+            nombre="Huatulco Aventura",
+            destino="Oaxaca",
+            precio=4500.00,
+            categoria="AVENTURA",
+            disponible=True
+        )
+
+    def test_catalogo_incluye_llamada_fetch_a_la_api(self):
+        """Verifica que la página del catálogo realmente consuma /api/paquetes/ vía JS"""
+        response = self.client.get(reverse('catalogo'))
+        self.assertEqual(response.status_code, 200)
+        contenido = response.content.decode()
+        self.assertIn("fetch('/api/paquetes/')", contenido)
+
+    def test_api_paquetes_estructura_consumible(self):
+        """Verifica que la API devuelva los campos que el frontend espera renderizar"""
+        response = self.client.get('/api/paquetes/')
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertGreaterEqual(len(data), 1)
+        campos_esperados = {'id', 'nombre', 'destino', 'precio', 'categoria', 'disponible'}
+        self.assertTrue(campos_esperados.issubset(data[0].keys()))

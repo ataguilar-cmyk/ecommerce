@@ -3,32 +3,36 @@
 {% block content %}
 <h2 class="mb-4">✈️ Catálogo de Paquetes Turísticos</h2>
 
-<div class="row">
-    {% for paquete in paquetes %}
+<div class="row" id="paquetes-container">
+    <p class="text-muted">Cargando paquetes...</p>
+</div>
+
+<script>
+const CATEGORIAS_LABEL = {
+    'PLAYA': 'Playa',
+    'AVENTURA': 'Aventura',
+    'CULTURAL': 'Cultural'
+};
+
+function crearTarjeta(paquete) {
+    const imagenHtml = paquete.imagen
+        ? `<img src="${paquete.imagen}" class="card-img-top" alt="${paquete.nombre}" style="height: 200px; object-fit: cover;">`
+        : `<div class="bg-light text-center py-5 border-bottom"><span class="text-muted">Sin imagen</span></div>`;
+
+    return `
     <div class="col-md-4 mb-3">
         <div class="card h-100 shadow-sm">
-
-
-            
-                {% if paquete.imagen %}
-                     <img src="{{ paquete.imagen.url }}" class="card-img-top" alt="{{ paquete.nombre }}" style="height: 200px; object-fit: cover;">
-                {% else %}
-                     <div class="bg-light text-center py-5 border-bottom">
-                        <span class="text-muted">Sin imagen</span>
-                     </div>
-                {% endif %}
-
-
+            ${imagenHtml}
             <div class="card-body">
-                <h5 class="card-title">{{ paquete.nombre }}</h5>
-                <p class="card-text text-muted">Destino: {{ paquete.destino }}</p>
-                <p class="card-text text-muted">Categoría: {{ paquete.get_categoria_display }}</p>
-                <h6 class="text-success">${{ paquete.precio }}</h6>
+                <h5 class="card-title">${paquete.nombre}</h5>
+                <p class="card-text text-muted">Destino: ${paquete.destino}</p>
+                <p class="card-text text-muted">Categoría: ${CATEGORIAS_LABEL[paquete.categoria] || paquete.categoria}</p>
+                <h6 class="text-success">$${paquete.precio}</h6>
             </div>
             <div class="card-footer bg-white border-top-0">
                 <form action="{% url 'crear_reserva' %}" method="POST">
                     {% csrf_token %}
-                    <input type="hidden" name="paquete_id" value="{{ paquete.id }}">
+                    <input type="hidden" name="paquete_id" value="${paquete.id}">
                     <div class="input-group mb-2">
                         <input type="text" name="cliente_nombre" class="form-control" placeholder="Tu nombre" required>
                         <button type="submit" class="btn btn-primary">Reservar</button>
@@ -36,9 +40,28 @@
                 </form>
             </div>
         </div>
-    </div>
-    {% empty %}
-    <p>No hay paquetes registrados en el catálogo.</p>
-    {% endfor %}
-</div>
+    </div>`;
+}
+
+async function cargarCatalogo() {
+    const contenedor = document.getElementById('paquetes-container');
+    try {
+        const response = await fetch('/api/paquetes/');
+        if (!response.ok) throw new Error('Error al consultar la API');
+        const paquetes = await response.json();
+        const disponibles = paquetes.filter(p => p.disponible);
+
+        if (disponibles.length === 0) {
+            contenedor.innerHTML = '<p>No hay paquetes registrados en el catálogo.</p>';
+            return;
+        }
+        contenedor.innerHTML = disponibles.map(crearTarjeta).join('');
+    } catch (error) {
+        contenedor.innerHTML = '<p class="text-danger">No se pudo cargar el catálogo. Intenta de nuevo más tarde.</p>';
+        console.error(error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', cargarCatalogo);
+</script>
 {% endblock %}

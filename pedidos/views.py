@@ -19,9 +19,8 @@ def es_operador(user):
 # ==========================================
 
 def catalogo_view(request):
-    """Muestra el catálogo de paquetes al cliente utilizando el DAO"""
-    paquetes = PaqueteTuristicoDAO.obtener_disponibles()
-    return render(request, 'mainvista/catalogo.html', {'paquetes': paquetes})
+    """Renderiza el catálogo; los paquetes se cargan del lado del cliente vía fetch a /api/paquetes/"""
+    return render(request, 'mainvista/catalogo.html')
 
 @login_required
 @user_passes_test(es_operador, login_url='/admin/login/')
